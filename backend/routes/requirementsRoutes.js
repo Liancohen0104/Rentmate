@@ -41,8 +41,6 @@ router.post("/", verifyToken, async (req, res) => {
     } = profile;
 
     const where = {};
-    if (city) where.city = city;
-    if (propertyType) where.propertyType = propertyType;
 
     if (minPrice != null || maxPrice != null) {
       where.price = {};
