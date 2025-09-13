@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "../models/User.js";
 import { sendPasswordResetEmail } from './emailService.js';
+import { getCityCoords } from './geoService.js';
 
 function signToken(user) {
   return jwt.sign(
@@ -38,6 +39,8 @@ function publicUserDTO(u) {
     prefPriority: u.prefPriority,
     createdAt: u.createdAt,
     updatedAt: u.updatedAt,
+    preferred_lat: u.preferred_lat,
+    preferred_lng: u.preferred_lng,
   };
 }
 
@@ -78,7 +81,6 @@ export async function register(req, res) {
       return res.status(400).json({ error: "Passwords do not match" });
     }
 
-    // בדיקת קיום משתמש
     const exists = await User.findOne({ where: { email } });
     if (exists) {
       return res.status(409).json({ error: "Email already in use" });
@@ -86,6 +88,16 @@ export async function register(req, res) {
 
     let imageURL = undefined;
     if (req.file?.path) imageURL = req.file.path;
+
+    // קואורדינטות לעיר המועדפת
+    let coords = {};
+    if (preferredCity) {
+      try {
+        coords = await getCityCoords(preferredCity);
+      } catch (err) {
+        console.error("Geo error:", err.message);
+      }
+    }
 
     const newUser = await User.create({
       firstName,
@@ -96,7 +108,6 @@ export async function register(req, res) {
       dateOfBirth: dateOfBirth || null,
       location,
 
-      // שדות העדפות
       preferredCity,
       preferredNeighborhood,
       prefMinRooms,
@@ -111,6 +122,9 @@ export async function register(req, res) {
       prefTagsWanted,
       prefTagsExcluded,
       prefPriority,
+
+      preferred_lat: coords.lat || null,
+      preferred_lng: coords.lng || null,
     });
 
     const token = signToken(newUser);
@@ -237,7 +251,6 @@ export async function updateProfile(req, res) {
       newPassword,
       confirmPassword,
 
-      // עדכון העדפות חיפוש
       preferredCity,
       preferredNeighborhood,
       prefMinRooms,
@@ -254,7 +267,6 @@ export async function updateProfile(req, res) {
       prefPriority,
     } = req.body;
 
-    // פרטים בסיסיים
     if (firstName !== undefined) user.firstName = firstName;
     if (lastName !== undefined) user.lastName = lastName;
     if (location !== undefined) user.location = location;
@@ -264,17 +276,22 @@ export async function updateProfile(req, res) {
       user.imageURL = req.file.path;
     }
 
-    // שינוי סיסמה
     if (newPassword) {
       if (!currentPassword) {
-        return res.status(400).json({ error: "Current password is required" });
+        return res
+          .status(400)
+          .json({ error: "Current password is required" });
       }
       if (newPassword !== confirmPassword) {
-        return res.status(400).json({ error: "New passwords do not match" });
+        return res
+          .status(400)
+          .json({ error: "New passwords do not match" });
       }
       const ok = await bcrypt.compare(currentPassword, user.password);
       if (!ok) {
-        return res.status(401).json({ error: "Current password is incorrect" });
+        return res
+          .status(401)
+          .json({ error: "Current password is incorrect" });
       }
       user.password = newPassword;
     }
@@ -282,7 +299,6 @@ export async function updateProfile(req, res) {
     const setIfDefined = (key, val) => {
       if (val !== undefined) user[key] = val;
     };
-    setIfDefined("preferredCity", preferredCity);
     setIfDefined("preferredNeighborhood", preferredNeighborhood);
     setIfDefined("prefMinRooms", prefMinRooms);
     setIfDefined("prefMaxRooms", prefMaxRooms);
@@ -296,6 +312,18 @@ export async function updateProfile(req, res) {
     setIfDefined("prefTagsWanted", prefTagsWanted);
     setIfDefined("prefTagsExcluded", prefTagsExcluded);
     setIfDefined("prefPriority", prefPriority);
+
+    // אם המשתמש עדכן עיר מועדפת → נעדכן גם קואורדינטות
+    if (preferredCity !== undefined) {
+      user.preferredCity = preferredCity;
+      try {
+        const coords = await getCityCoords(preferredCity);
+        user.preferred_lat = coords.lat;
+        user.preferred_lng = coords.lng;
+      } catch (err) {
+        console.error("Geo error:", err.message);
+      }
+    }
 
     await user.save();
 

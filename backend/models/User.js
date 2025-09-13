@@ -51,6 +51,8 @@ const User = sequelize.define("User", {
     // העדפות חיפוש דירה
     preferredCity: { type: DataTypes.STRING, allowNull: true },
     preferredNeighborhood: { type: DataTypes.STRING, allowNull: true },
+    preferred_lat: { type: DataTypes.FLOAT, allowNull: true },
+    preferred_lng: { type: DataTypes.FLOAT, allowNull: true },
 
     prefMinRooms: { type: DataTypes.FLOAT, allowNull: true },
     prefMaxRooms: { type: DataTypes.FLOAT, allowNull: true },

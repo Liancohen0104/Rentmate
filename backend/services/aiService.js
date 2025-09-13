@@ -62,56 +62,74 @@ function tryParseJSON(text) {
 // בניית פרומפט
 function buildPrompt(userRequirements, listings) {
   return `
-INSTRUCTIONS:
-You are a ranking system for real estate listings.
+You are an AI system that ranks real estate listings according to user requirements.
 
-INPUT:
-1) "User requirements" (JSON object). Keys may include:
-   city, neighborhood, minRooms, maxRooms, minPrice, maxPrice,
-   minSquareMeter, maxSquareMeter, propertyType, minFloor, maxFloor,
-   tagsWanted, tagsExcluded, priority.
-2) "Listings" (array of objects) with fields:
+### Input
+1. User requirements (JSON object).
+2. Listings: array of objects with fields:
    id, city, area, neighborhood, street, houseNumber, price, priceBefore,
-   propertyType, rooms, squareMeter, floor, condition, tags.
+   propertyType, rooms, squareMeter, floor, condition, tags, distanceKm.
 
-TASK:
-- Rank all listings by how well they satisfy the user requirements.
-- Always return **valid JSON only** in the format:
+### Output
+- Always return **valid JSON only**:
 {
   "items": [
-    { "id": "<same as input>", "score": 0.0-1.0, "reason": "Up to 20 hebrew words" }
+    { "id": "<id from input>", "score": 0.0-1.0, "reason": "עד 20 מילים בעברית בלבד" }
   ]
 }
-- Sort items by score (descending).
+- Sort items by score (highest first).
+- **Every listing must include a score and a reason** (reason must be in Hebrew only, ≤20 words).
+- If the apartment is not in the requested city, still give it a score and explain that it is in a nearby city, including distanceKm.
 
-SCORING RULES:
-1. **City/Neighborhood Matching**
-   - Treat city and neighborhood as very important.
-   - Be tolerant to spelling differences, typos, hyphens, or variations (e.g., "תל אבי" ≈ "תל אביב", "תל אביב יפו" ≈ "תל אביב").
-   - If neighborhood is specified and matches closely, strongly increase score.
-   - If city matches but neighborhood mismatches, lower score but don’t eliminate.
+### Scoring Rules
 
-2. **Tags**
-   - If tagsWanted are present: listings with them get a significant score boost.
-   - If tagsExcluded are present: listings containing them should be penalized heavily or excluded.
+1. **City (Top Priority)**
+   - Apartments in the requested city = highest priority.
+   - If no matches in the city → allow apartments from other cities (already pre-filtered by distance).
+   - Always explain if the apartment is in a nearby city and include distanceKm in the reason.
 
-3. **Priority Handling**
-   - If "priority" is specified (e.g., "price", "rooms", "location"):
-     - Give this category the most weight in scoring.
-   - If no priority is given, use default weights:
-     - Price: 40%
-     - Rooms: 30%
-     - Location + Tags: 30%
+2. **Price**
+   - Respect minPrice / maxPrice ranges.
+   - Allow small flexibility: ±10% deviation is acceptable.
 
-4. **Numeric Filters**
-   - Respect min/max ranges:
-     - Rooms, price, square meters, floor.
-   - Listings outside these ranges receive a low score, but may still appear if no better matches exist.
+3. **Rooms**
+   - Respect minRooms / maxRooms.
+   - Allow small flexibility: ±0.5 room.
 
-5. **General Rules**
-   - Do NOT invent details not in the listing.
-   - Always provide a short, clear English reason (max 20 words).
-   - If no listing perfectly matches, return the closest ones with honest reasoning.
+4. **Apartment Size**
+   - Respect minSquareMeter / maxSquareMeter.
+   - Allow small flexibility: ±10%.
+
+5. **Neighborhood**
+   - If requested and matches → boost.
+   - If mismatched but same city → slight penalty.
+
+6. **Tags**
+   - tagsWanted → boost.
+   - tagsExcluded → heavy penalty.
+
+7. **Priority**
+   - If specified (price, rooms, location, size) → strongest weight.
+   - If not specified → default weights:
+     - Location: 40%
+     - Price: 25%
+     - Rooms: 20%
+     - Size + Tags: 15%
+
+8. **General**
+   - Never invent details not in listings.
+   - All reasons must be in Hebrew, ≤20 words.
+   - Even for less suitable apartments, still provide a score and reason.
+
+### Example Output
+{
+  "items": [
+    { "id": 101, "score": 0.95, "reason": "בתל אביב, מחיר מתאים, 3 חדרים, 70 מ״ר" },
+    { "id": 202, "score": 0.70, "reason": "רמת גן, 15 ק״מ מתל אביב, מחיר סביר, 2 חדרים" }
+  ]
+}
+
+### Now rank the following:
 
 USER REQUIREMENTS:
 ${JSON.stringify(userRequirements, null, 2)}
@@ -120,7 +138,6 @@ LISTINGS:
 ${JSON.stringify(listings, null, 2)}
 `;
 }
-
 
 // AI בחירת הדירות הטובות ביותר לפי דרישות משתמש בעזרת
 export async function pickBestApartments(userRequirements, apartments, options = {}) {

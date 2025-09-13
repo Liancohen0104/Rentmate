@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import scrapeRoutes from "./routes/scrapeRoutes.js";
-import requirementsRoutes from "./routes/requirementsRoutes.js";
+import apartmentMatchRoutes from "./routes/apartmentMatchRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import sequelize from "./services/db.js";
 import "./services/apartmentUpdater.js";
@@ -30,7 +30,7 @@ const PORT = process.env.PORT;
 
 // ראוטים של הסקרייפ
 app.use("/scrape", scrapeRoutes);
-app.use("/requirements", requirementsRoutes);
+app.use("/apartment-match", apartmentMatchRoutes);
 app.use("/users", userRoutes);
 
 // ברירת מחדל – דף בית קטן
