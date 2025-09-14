@@ -1,10 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
-import scrapeRoutes from "./routes/scrapeRoutes.js";
 import apartmentMatchRoutes from "./routes/apartmentMatchRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import sequelize from "./services/db.js";
+import sequelize from "./db/db.js";
 import "./services/apartmentUpdater.js";
 
 dotenv.config();
@@ -28,8 +27,7 @@ const PORT = process.env.PORT;
   }
 })();
 
-// ראוטים של הסקרייפ
-app.use("/scrape", scrapeRoutes);
+// ראוטים
 app.use("/apartment-match", apartmentMatchRoutes);
 app.use("/users", userRoutes);
 
