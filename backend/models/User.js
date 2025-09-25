@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize";
-import sequelize from "../services/db.js";
+import sequelize from "../db/db.js";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 

@@ -1,6 +1,7 @@
 // מודל מודעת דירה
 import { DataTypes } from "sequelize";
-import sequelize from "../services/db.js";
+import sequelize from "../db/db.js";
+
 
 const Apartment = sequelize.define("Apartment", {
   id: {
