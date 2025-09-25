@@ -81,40 +81,63 @@ const RegisterPage = () => {
 
   // 🔥 UPDATED FUNCTION - Changed the handleSubmit function
   const handleSubmit = async () => {
-    setIsLoading(true);
-    setError('');
+  setIsLoading(true);
+  setError('');
 
-    try {
-      const response = await fetch('http://localhost:4000/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Registration failed');
-      }
-
-      // 🔥 NEW - Use AuthContext to handle registration
-      const result = await register(data.user, data.token);
+  try {
+    // Process the form data before sending to backend
+    const processedData = {
+      ...formData,
+      role: "member",
       
-      if (result.success) {
-        // 🔥 NEW - Navigate to home page using React Router
-        navigate('/', { replace: true });
-      } else {
-        setError(result.error);
-      }
+      // Convert comma-separated strings to arrays
+      prefTagsWanted: (formData.prefTagsWanted && formData.prefTagsWanted.trim()) 
+        ? formData.prefTagsWanted.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+        : [],
+        
+      prefTagsExcluded: (formData.prefTagsExcluded && formData.prefTagsExcluded.trim())
+        ? formData.prefTagsExcluded.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
+        : [],
       
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
+      // Convert string numbers to integers
+      prefMinRooms: formData.prefMinRooms && formData.prefMinRooms.trim() ? parseInt(formData.prefMinRooms) : null,
+      prefMaxRooms: formData.prefMaxRooms && formData.prefMaxRooms.trim() ? parseInt(formData.prefMaxRooms) : null,
+      prefMinPrice: formData.prefMinPrice && formData.prefMinPrice.trim() ? parseInt(formData.prefMinPrice) : null,
+      prefMaxPrice: formData.prefMaxPrice && formData.prefMaxPrice.trim() ? parseInt(formData.prefMaxPrice) : null,
+      prefMinSquareMeter: formData.prefMinSquareMeter && formData.prefMinSquareMeter.trim() ? parseInt(formData.prefMinSquareMeter) : null,
+      prefMaxSquareMeter: formData.prefMaxSquareMeter && formData.prefMaxSquareMeter.trim() ? parseInt(formData.prefMaxSquareMeter) : null,
+      prefMinFloor: formData.prefMinFloor && formData.prefMinFloor.trim() ? parseInt(formData.prefMinFloor) : null,
+      prefMaxFloor: formData.prefMaxFloor && formData.prefMaxFloor.trim() ? parseInt(formData.prefMaxFloor) : null,
+    };
+
+    const response = await fetch('http://localhost:4000/users/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(processedData), // Send processedData, not formData
+    });
+
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Registration failed');
     }
-  };
+
+    const result = await register(data.user, data.token);
+    
+    if (result.success) {
+      navigate('/', { replace: true });
+    } else {
+      setError(result.error);
+    }
+    
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // 🔥 UPDATED FUNCTION - Changed from window.location.href to navigate
   const goToLogin = () => {

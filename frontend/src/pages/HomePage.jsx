@@ -2,22 +2,15 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const HomePage = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
-  // If not authenticated, redirect to login
   if (!isAuthenticated()) {
     window.location.href = '/login';
     return null;
   }
 
-  const handleLogout = () => {
-    logout();
-    window.location.href = '/login';
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600">
-      {/* Animated Background */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse animation-delay-2000"></div>
@@ -25,34 +18,8 @@ const HomePage = () => {
       </div>
 
       <div className="relative z-10 min-h-screen flex flex-col">
-        {/* Header */}
-        <header className="bg-white/10 backdrop-blur-sm border-b border-white/20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center space-x-3">
-                <div className="bg-white/20 p-2 rounded-xl">
-                  <span className="text-2xl">🏡</span>
-                </div>
-                <span className="text-2xl font-bold text-white">Rentmate</span>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <span className="text-white/90">Hello, {user?.firstName}! 👋</span>
-                <button
-                  onClick={handleLogout}
-                  className="px-4 py-2 bg-white/20 backdrop-blur-sm border border-white/30 text-white rounded-lg hover:bg-white/30 transition-all duration-300"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="flex-1 flex items-center justify-center px-4">
+        <main className="flex-1 flex items-center justify-center px-4 pt-20">
           <div className="max-w-4xl mx-auto text-center">
-            {/* Success Message */}
             <div className="bg-white/10 backdrop-blur-xl rounded-3xl p-12 border border-white/20 shadow-2xl">
               <div className="mb-8">
                 <span className="text-8xl animate-bounce">🎉</span>
@@ -68,7 +35,6 @@ const HomePage = () => {
                 You're now ready to find your perfect rental home with AI assistance!
               </p>
 
-              {/* User Info Card */}
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 mb-8 border border-white/20">
                 <h2 className="text-2xl font-semibold text-white mb-4">Account Information</h2>
                 
@@ -99,7 +65,6 @@ const HomePage = () => {
                 </div>
               </div>
 
-              {/* Next Steps */}
               <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-2xl p-6 border border-blue-400/30">
                 <h3 className="text-xl font-semibold text-white mb-4">🚀 What's Next?</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
@@ -118,7 +83,6 @@ const HomePage = () => {
                 </div>
               </div>
 
-              {/* Coming Soon Message */}
               <div className="mt-8 text-center">
                 <p className="text-white/70 text-lg">
                   🚧 More amazing features coming soon! 
