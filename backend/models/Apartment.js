@@ -8,7 +8,6 @@ const Apartment = sequelize.define("Apartment", {
     primaryKey: true,
   },
   token: DataTypes.STRING,
-  originalUrl: DataTypes.STRING,
   city: DataTypes.STRING,
   area: DataTypes.STRING,
   neighborhood: DataTypes.STRING,

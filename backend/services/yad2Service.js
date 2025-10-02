@@ -36,9 +36,6 @@ function normalizeApartment(raw, enums) {
   return {
     id: raw.orderId,
     token: raw.token,
-    originalUrl: raw.token
-      ? `https://www.yad2.co.il/realestate/item/${raw.token}`
-      : null,
     city: raw.address?.city?.text || null,
     area: raw.address?.area?.text || null,
     neighborhood: raw.address?.neighborhood?.text || null,
