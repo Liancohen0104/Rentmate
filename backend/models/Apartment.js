@@ -2,13 +2,13 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../db/db.js";
 
-
 const Apartment = sequelize.define("Apartment", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
   },
   token: DataTypes.STRING,
+  originalUrl: DataTypes.STRING,
   city: DataTypes.STRING,
   area: DataTypes.STRING,
   neighborhood: DataTypes.STRING,

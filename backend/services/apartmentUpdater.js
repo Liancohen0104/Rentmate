@@ -18,10 +18,8 @@ async function scrapeAndSave(limit = 50) {
 cron.schedule("0 3 * * *", async () => {
   console.log("[CRON] Starting daily scrape...");
   try {
-    await scrapeAndSave(200);
+    await scrapeAndSave(20);
   } catch (err) {
     console.error("[CRON] Error scraping:", err.message);
   }
 });
-
-

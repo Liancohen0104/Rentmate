@@ -36,6 +36,9 @@ function normalizeApartment(raw, enums) {
   return {
     id: raw.orderId,
     token: raw.token,
+    originalUrl: raw.token
+      ? `https://www.yad2.co.il/realestate/item/${raw.token}`
+      : null,
     city: raw.address?.city?.text || null,
     area: raw.address?.area?.text || null,
     neighborhood: raw.address?.neighborhood?.text || null,
@@ -73,3 +76,21 @@ export async function scrapeApartments(limit = 50) {
 
   return results.slice(0, limit);
 }
+
+// מחזיר מודעות גולמיות (כפי שמגיעות מיד2) עם הגבלה על מספר המודעות
+export async function scrapeRawApartments(limit = 50) {
+  let results = [];
+  let page = 1;
+
+  while (results.length < limit) {
+    const { apartments } = await scrapePage(page);
+    if (!apartments.length) break;
+
+    results.push(...apartments); 
+    page++;
+  }
+
+  return results.slice(0, limit);
+}
+
+
