@@ -449,9 +449,6 @@ const ResultsPage = () => {
                 >
                   קישור למודעה המקורית
                 </a>
-                <button className="flex-1 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-2xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300">
-                  שמור לעדיפויות
-                </button>
               </div>
             </div>
           </div>

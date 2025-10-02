@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const ProfilePage = () => {
-  // You'll need to import these:
-   const navigate = useNavigate();
-   const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const { user, logout, isAuthenticated } = useAuth();
   
   const [profileData, setProfileData] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -14,8 +13,8 @@ const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  // Fetch user profile data
   const fetchUserProfile = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -41,7 +40,6 @@ const ProfilePage = () => {
     }
   };
 
-  // Load profile on component mount
   useEffect(() => {
     fetchUserProfile();
   }, []);
@@ -69,7 +67,6 @@ const ProfilePage = () => {
     try {
       const token = localStorage.getItem('token');
       
-      // Process arrays like in registration
       const processedData = {
         ...editData,
         prefTagsWanted: (editData.prefTagsWanted && typeof editData.prefTagsWanted === 'string') 
@@ -98,14 +95,36 @@ const ProfilePage = () => {
 
       setProfileData(data.user);
       setEditMode(false);
-      
-      // Update localStorage
       localStorage.setItem('user', JSON.stringify(data.user));
       
     } catch (err) {
       setError(err.message);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:4000/users/delete-me', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to delete profile');
+      }
+
+      await logout();
+      navigate('/login', { replace: true });
+    } catch (err) {
+      setError(err.message);
+      setShowDeleteConfirm(false);
     }
   };
 
@@ -125,15 +144,14 @@ const ProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-400 via-teal-500 to-blue-600 relative overflow-hidden">
-      {/* Animated Background */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-72 h-72 bg-cyan-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
         <div className="absolute top-40 right-10 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
         <div className="absolute -bottom-8 left-20 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
       </div>
-         <div className="relative z-10 min-h-screen pt-16"> {/* Added pt-16 */}
-        {/* Main Content */}
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+      <div className="relative z-10 min-h-screen pt-16">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {profileData && (
             <>
               <div className="text-center mb-8">
@@ -151,44 +169,41 @@ const ProfilePage = () => {
                 <p className="text-emerald-200">Member since {new Date(profileData.createdAt).toLocaleDateString()}</p>
               </div>
 
-              {/* Error Message */}
               {error && (
                 <div className="mb-6 p-4 bg-red-500/20 backdrop-blur-sm border border-red-400/50 rounded-2xl">
                   <p className="text-red-200 text-center">{error}</p>
                 </div>
               )}
 
-              {/* Profile Content */}
               <div className="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
                 <div className="flex justify-between items-center mb-8">
                   <h2 className="text-2xl font-bold text-white">Profile Information</h2>
-                  <button
-                    onClick={handleEditToggle}
-                    disabled={isSaving}
-                    className="px-6 py-2 bg-emerald-500/80 hover:bg-emerald-500 text-white rounded-lg transition-all duration-300 disabled:opacity-50"
-                  >
-                    {editMode ? 'Cancel' : 'Edit Profile'}
-                  </button>
+                  <div className="flex space-x-4">
+                    <button
+                      onClick={handleEditToggle}
+                      disabled={isSaving}
+                      className="px-6 py-2 bg-emerald-500/80 hover:bg-emerald-500 text-white rounded-lg transition-all duration-300 disabled:opacity-50"
+                    >
+                      {editMode ? 'Cancel' : 'Edit Profile'}
+                    </button>
+                    <button
+                      onClick={() => setShowDeleteConfirm(true)}
+                      className="px-6 py-2 bg-red-500/80 hover:bg-red-500 text-white rounded-lg transition-all duration-300"
+                    >
+                      Delete Account
+                    </button>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  {/* Personal Information */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <h3 className="text-xl font-semibold text-white mb-4">
-                      👤 Personal Information
-                    </h3>
-                    
+                    <h3 className="text-xl font-semibold text-white mb-4">👤 Personal Information</h3>
                     <div className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-emerald-200 mb-1">First Name</label>
                           {editMode ? (
-                            <input
-                              name="firstName"
-                              value={editData.firstName || ''}
-                              onChange={handleInputChange}
-                              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            />
+                            <input name="firstName" value={editData.firstName || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                           ) : (
                             <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.firstName}</p>
                           )}
@@ -196,18 +211,12 @@ const ProfilePage = () => {
                         <div>
                           <label className="block text-sm font-medium text-emerald-200 mb-1">Last Name</label>
                           {editMode ? (
-                            <input
-                              name="lastName"
-                              value={editData.lastName || ''}
-                              onChange={handleInputChange}
-                              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                            />
+                            <input name="lastName" value={editData.lastName || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                           ) : (
                             <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.lastName}</p>
                           )}
                         </div>
                       </div>
-
                       <div>
                         <label className="block text-sm font-medium text-emerald-200 mb-1">Email</label>
                         <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.email}</p>
@@ -216,158 +225,167 @@ const ProfilePage = () => {
                     </div>
                   </div>
 
-                  {/* Search Preferences */}
                   <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                    <h3 className="text-xl font-semibold text-white mb-4">
-                      🏠 Search Preferences
-                    </h3>
-                    
+                    <h3 className="text-xl font-semibold text-white mb-4">📍 Location Preferences</h3>
                     <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-emerald-200 mb-1">Preferred City</label>
-                          {editMode ? (
-                            <input
-                              name="preferredCity"
-                              value={editData.preferredCity || ''}
-                              onChange={handleInputChange}
-                              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                              placeholder="Tel Aviv, Jerusalem..."
-                            />
-                          ) : (
-                            <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.preferredCity || 'Not specified'}</p>
-                          )}
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-emerald-200 mb-1">Neighborhood</label>
-                          {editMode ? (
-                            <input
-                              name="preferredNeighborhood"
-                              value={editData.preferredNeighborhood || ''}
-                              onChange={handleInputChange}
-                              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                              placeholder="Center, Florentin..."
-                            />
-                          ) : (
-                            <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.preferredNeighborhood || 'Not specified'}</p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-emerald-200 mb-1">Price Range</label>
-                          <div className="flex space-x-2">
-                            {editMode ? (
-                              <>
-                                <input
-                                  name="prefMinPrice"
-                                  type="number"
-                                  value={editData.prefMinPrice || ''}
-                                  onChange={handleInputChange}
-                                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                  placeholder="Min"
-                                />
-                                <input
-                                  name="prefMaxPrice"
-                                  type="number"
-                                  value={editData.prefMaxPrice || ''}
-                                  onChange={handleInputChange}
-                                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                  placeholder="Max"
-                                />
-                              </>
-                            ) : (
-                              <p className="text-white bg-white/5 px-3 py-2 rounded-lg w-full">
-                                ₪{profileData.prefMinPrice || 0} - ₪{profileData.prefMaxPrice || 'No limit'}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-emerald-200 mb-1">Rooms</label>
-                          <div className="flex space-x-2">
-                            {editMode ? (
-                              <>
-                                <input
-                                  name="prefMinRooms"
-                                  type="number"
-                                  value={editData.prefMinRooms || ''}
-                                  onChange={handleInputChange}
-                                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                  placeholder="Min"
-                                />
-                                <input
-                                  name="prefMaxRooms"
-                                  type="number"
-                                  value={editData.prefMaxRooms || ''}
-                                  onChange={handleInputChange}
-                                  className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                                  placeholder="Max"
-                                />
-                              </>
-                            ) : (
-                              <p className="text-white bg-white/5 px-3 py-2 rounded-lg w-full">
-                                {profileData.prefMinRooms || 0} - {profileData.prefMaxRooms || 'No limit'} rooms
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
                       <div>
-                        <label className="block text-sm font-medium text-emerald-200 mb-1">Priority</label>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Preferred City</label>
                         {editMode ? (
-                          <select
-                            name="prefPriority"
-                            value={editData.prefPriority || ''}
-                            onChange={handleInputChange}
-                            className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                          >
-                            <option value="" className="bg-gray-800">Select priority</option>
-                            <option value="price" className="bg-gray-800">Best Price</option>
-                            <option value="location" className="bg-gray-800">Best Location</option>
-                            <option value="size" className="bg-gray-800">Largest Space</option>
-                            <option value="features" className="bg-gray-800">Most Features</option>
-                            <option value="balanced" className="bg-gray-800">Balanced</option>
-                          </select>
+                          <input name="preferredCity" value={editData.preferredCity || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Tel Aviv, Jerusalem..." />
                         ) : (
-                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg capitalize">
-                            {profileData.prefPriority || 'Not specified'}
-                          </p>
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.preferredCity || 'Not specified'}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Neighborhood</label>
+                        {editMode ? (
+                          <input name="preferredNeighborhood" value={editData.preferredNeighborhood || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="Center, Florentin..." />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.preferredNeighborhood || 'Not specified'}</p>
                         )}
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Features Section */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-xl font-semibold text-white mb-4">💰 Price Range</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Min Price (₪)</label>
+                        {editMode ? (
+                          <input name="prefMinPrice" type="number" value={editData.prefMinPrice || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">₪{profileData.prefMinPrice || 0}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Max Price (₪)</label>
+                        {editMode ? (
+                          <input name="prefMaxPrice" type="number" value={editData.prefMaxPrice || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">₪{profileData.prefMaxPrice || 'No limit'}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-xl font-semibold text-white mb-4">🛏️ Rooms</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Min Rooms</label>
+                        {editMode ? (
+                          <input name="prefMinRooms" type="number" value={editData.prefMinRooms || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.prefMinRooms || 0}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Max Rooms</label>
+                        {editMode ? (
+                          <input name="prefMaxRooms" type="number" value={editData.prefMaxRooms || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.prefMaxRooms || 'No limit'}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-xl font-semibold text-white mb-4">📐 Square Meters</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Min m²</label>
+                        {editMode ? (
+                          <input name="prefMinSquareMeter" type="number" value={editData.prefMinSquareMeter || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.prefMinSquareMeter || 0} m²</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Max m²</label>
+                        {editMode ? (
+                          <input name="prefMaxSquareMeter" type="number" value={editData.prefMaxSquareMeter || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.prefMaxSquareMeter || 'No limit'} m²</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-xl font-semibold text-white mb-4">🏢 Floor</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Min Floor</label>
+                        {editMode ? (
+                          <input name="prefMinFloor" type="number" value={editData.prefMinFloor || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.prefMinFloor || 0}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-emerald-200 mb-1">Max Floor</label>
+                        {editMode ? (
+                          <input name="prefMaxFloor" type="number" value={editData.prefMaxFloor || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                        ) : (
+                          <p className="text-white bg-white/5 px-3 py-2 rounded-lg">{profileData.prefMaxFloor || 'No limit'}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-xl font-semibold text-white mb-4">🏠 Property Type</h3>
+                    {editMode ? (
+                      <select name="prefPropertyType" value={editData.prefPropertyType || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="" className="bg-gray-800">Any Type</option>
+                        <option value="apartment" className="bg-gray-800">Apartment</option>
+                        <option value="house" className="bg-gray-800">House</option>
+                        <option value="studio" className="bg-gray-800">Studio</option>
+                        <option value="penthouse" className="bg-gray-800">Penthouse</option>
+                      </select>
+                    ) : (
+                      <p className="text-white bg-white/5 px-3 py-2 rounded-lg capitalize">{profileData.prefPropertyType || 'Any Type'}</p>
+                    )}
+                  </div>
+
+                  <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                    <h3 className="text-xl font-semibold text-white mb-4">🎯 Priority</h3>
+                    {editMode ? (
+                      <select name="prefPriority" value={editData.prefPriority || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="" className="bg-gray-800">Select priority</option>
+                        <option value="price" className="bg-gray-800">Best Price</option>
+                        <option value="location" className="bg-gray-800">Best Location</option>
+                        <option value="size" className="bg-gray-800">Largest Space</option>
+                        <option value="features" className="bg-gray-800">Most Features</option>
+                        <option value="balanced" className="bg-gray-800">Balanced</option>
+                      </select>
+                    ) : (
+                      <p className="text-white bg-white/5 px-3 py-2 rounded-lg capitalize">{profileData.prefPriority || 'Not specified'}</p>
+                    )}
+                  </div>
+                </div>
+
                 <div className="mt-8 bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-                  <h3 className="text-xl font-semibold text-white mb-4">
-                    ✨ Preferred Features
-                  </h3>
-                  
+                  <h3 className="text-xl font-semibold text-white mb-4">✨ Preferred Features</h3>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-emerald-200 mb-2">Must-Have Features</label>
                       {editMode ? (
-                        <input
-                          name="prefTagsWanted"
-                          value={Array.isArray(editData.prefTagsWanted) 
-                            ? editData.prefTagsWanted.join(', ') 
-                            : editData.prefTagsWanted || ''}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                          placeholder="parking, balcony, elevator..."
-                        />
+                        <input name="prefTagsWanted" value={Array.isArray(editData.prefTagsWanted) ? editData.prefTagsWanted.join(', ') : editData.prefTagsWanted || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="parking, balcony, elevator..." />
                       ) : (
                         <div className="bg-white/5 px-3 py-2 rounded-lg min-h-[2.5rem] flex items-center">
                           {profileData.prefTagsWanted && profileData.prefTagsWanted.length > 0 ? (
                             <div className="flex flex-wrap gap-2">
                               {profileData.prefTagsWanted.map((tag, index) => (
-                                <span key={index} className="bg-emerald-500/30 text-emerald-200 px-2 py-1 rounded text-sm">
-                                  {tag}
-                                </span>
+                                <span key={index} className="bg-emerald-500/30 text-emerald-200 px-2 py-1 rounded text-sm">{tag}</span>
                               ))}
                             </div>
                           ) : (
@@ -376,27 +394,16 @@ const ProfilePage = () => {
                         </div>
                       )}
                     </div>
-                    
                     <div>
                       <label className="block text-sm font-medium text-emerald-200 mb-2">Deal Breakers</label>
                       {editMode ? (
-                        <input
-                          name="prefTagsExcluded"
-                          value={Array.isArray(editData.prefTagsExcluded) 
-                            ? editData.prefTagsExcluded.join(', ') 
-                            : editData.prefTagsExcluded || ''}
-                          onChange={handleInputChange}
-                          className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                          placeholder="ground floor, no parking..."
-                        />
+                        <input name="prefTagsExcluded" value={Array.isArray(editData.prefTagsExcluded) ? editData.prefTagsExcluded.join(', ') : editData.prefTagsExcluded || ''} onChange={handleInputChange} className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500" placeholder="ground floor, no parking..." />
                       ) : (
                         <div className="bg-white/5 px-3 py-2 rounded-lg min-h-[2.5rem] flex items-center">
                           {profileData.prefTagsExcluded && profileData.prefTagsExcluded.length > 0 ? (
                             <div className="flex flex-wrap gap-2">
                               {profileData.prefTagsExcluded.map((tag, index) => (
-                                <span key={index} className="bg-red-500/30 text-red-200 px-2 py-1 rounded text-sm">
-                                  {tag}
-                                </span>
+                                <span key={index} className="bg-red-500/30 text-red-200 px-2 py-1 rounded text-sm">{tag}</span>
                               ))}
                             </div>
                           ) : (
@@ -408,21 +415,10 @@ const ProfilePage = () => {
                   </div>
                 </div>
 
-                {/* Save/Cancel Buttons */}
                 {editMode && (
                   <div className="flex justify-end space-x-4 mt-8 pt-6 border-t border-white/20">
-                    <button
-                      onClick={handleEditToggle}
-                      disabled={isSaving}
-                      className="px-6 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-300 disabled:opacity-50"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={handleSave}
-                      disabled={isSaving}
-                      className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-300 disabled:opacity-50 flex items-center"
-                    >
+                    <button onClick={handleEditToggle} disabled={isSaving} className="px-6 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-300 disabled:opacity-50">Cancel</button>
+                    <button onClick={handleSave} disabled={isSaving} className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all duration-300 disabled:opacity-50 flex items-center">
                       {isSaving ? (
                         <>
                           <svg className="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
@@ -431,9 +427,7 @@ const ProfilePage = () => {
                           </svg>
                           Saving...
                         </>
-                      ) : (
-                        'Save Changes'
-                      )}
+                      ) : ('Save Changes')}
                     </button>
                   </div>
                 )}
@@ -442,6 +436,24 @@ const ProfilePage = () => {
           )}
         </main>
       </div>
+
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+          <div className="bg-white/10 backdrop-blur-2xl rounded-3xl max-w-md w-full p-8 border border-white/20">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-4xl">⚠️</span>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Delete Account?</h3>
+              <p className="text-white/80">This action cannot be undone. All your data, preferences, and saved apartments will be permanently deleted.</p>
+            </div>
+            <div className="flex gap-4">
+              <button onClick={() => setShowDeleteConfirm(false)} className="flex-1 px-6 py-3 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-300">Cancel</button>
+              <button onClick={handleDeleteProfile} className="flex-1 px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all duration-300">Delete Forever</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

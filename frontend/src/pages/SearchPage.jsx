@@ -643,9 +643,6 @@ const SearchPage = () => {
                 >
                   קישור למודעה המקורית
                 </a>
-                <button className="flex-1 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-2xl hover:from-cyan-600 hover:to-blue-700 transition-all duration-300">
-                  שמור
-                </button>
               </div>
             </div>
           </div>

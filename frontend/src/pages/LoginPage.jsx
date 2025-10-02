@@ -188,22 +188,12 @@ const LoginPage = () => {
 
                 {/* Remember Me & Forgot Password */}
                 <div className="flex items-center justify-between pt-2">
-                  <div className="flex items-center group cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="w-5 h-5 bg-white/10 border-2 border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all duration-300"
-                    />
-                    <label className="ml-3 text-white/80 group-hover:text-white transition-colors cursor-pointer">
-                      Remember me ✨
-                    </label>
-                  </div>
-
                   <button
                     type="button"
                     onClick={() => navigate('/forgot-password')}
                     className="text-sm font-semibold text-transparent bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text hover:from-blue-300 hover:to-purple-300 transition-all duration-300"
                     >
-                    Forgot password? 🔄
+                    Forgot password? 
                   </button>
                 </div>
 
