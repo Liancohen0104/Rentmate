@@ -9,6 +9,8 @@ import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import SearchPage from './pages/SearchPage';
+
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
             <Route path="/results" element={<ResultsPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/search" element={<SearchPage />} />
+
           </Routes>
         </div>
       </Router>

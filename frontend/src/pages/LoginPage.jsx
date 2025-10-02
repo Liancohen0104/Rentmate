@@ -50,7 +50,7 @@ const LoginPage = () => {
       
       if (result.success) {
         // 🔥 NEW - Navigate to home page using React Router
-        navigate('/', { replace: true });
+        navigate('/results', { replace: true });
       } else {
         setError(result.error);
       }
@@ -207,7 +207,7 @@ const LoginPage = () => {
                   </button>
                 </div>
 
-                {/* Epic Login Button */}
+              {/* Epic Login Button */}
                 <div className="pt-6">
                   <button
                     onClick={handleSubmit}
@@ -229,35 +229,12 @@ const LoginPage = () => {
                         </>
                       ) : (
                         <>
-                          🚀 Sign In to Your Future
+                          Sign In to Your Future
                           <span className="ml-3 group-hover:translate-x-2 transition-transform duration-300">✨</span>
                         </>
                       )}
                     </span>
                   </button>
-                </div>
-
-                {/* Social Login Options */}
-                <div className="pt-8">
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-white/20"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-4 bg-transparent text-purple-200">Or continue with magic</span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mt-6">
-                    <button className="group relative flex items-center justify-center px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                      <span className="text-2xl mr-2">🌟</span>
-                      <span className="text-white font-medium">Google</span>
-                    </button>
-                    <button className="group relative flex items-center justify-center px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                      <span className="text-2xl mr-2">👤</span>
-                      <span className="text-white font-medium">Facebook</span>
-                    </button>
-                  </div>
                 </div>
               </div>
             </div>
