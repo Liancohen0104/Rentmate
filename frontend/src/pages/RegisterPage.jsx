@@ -127,7 +127,7 @@ const RegisterPage = () => {
     const result = await register(data.user, data.token);
     
     if (result.success) {
-      navigate('/results', { replace: true });
+      navigate('/', { replace: true });
     } else {
       setError(result.error);
     }

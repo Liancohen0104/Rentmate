@@ -4,7 +4,6 @@ import cors from "cors";
 import apartmentMatchRoutes from "./routes/apartmentMatchRoutes.js";
 import apartmentRoutes from "./routes/apartmentRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import scrapeRoutes from "./routes/scrapeRoutes.js";
 import sequelize from "./db/db.js";
 import "./services/apartmentUpdater.js";
 
