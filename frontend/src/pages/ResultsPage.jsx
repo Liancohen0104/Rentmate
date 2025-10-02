@@ -443,9 +443,14 @@ const ResultsPage = () => {
 
               {/* Action Buttons */}
               <div className="flex gap-4 mt-8">
-                <button className="flex-1 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300">
-                  צור קשר עם המפרסם
-                </button>
+                <a
+                  href={`https://www.yad2.co.il/realestate/item/${selectedApartment.token}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-2xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 text-center"
+                >
+                  קישור למודעה המקורית
+                </a>
                 <button className="flex-1 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-2xl hover:from-blue-600 hover:to-purple-700 transition-all duration-300">
                   שמור לעדיפויות
                 </button>
