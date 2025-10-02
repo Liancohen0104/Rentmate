@@ -1,5 +1,5 @@
 import express from "express";
-import { scrapeHtml, scrapeRawApartments } from "../services/yad2Service.js";
+import { scrapeRawApartments } from "../services/yad2Service.js";
 
 const router = express.Router();
 
