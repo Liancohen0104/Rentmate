@@ -31,7 +31,7 @@ const Navbar = () => {
           {/* Logo */}
           <div 
             className="flex items-center space-x-3 cursor-pointer group"
-            onClick={() => handleNavigation('/')}
+            onClick={() => handleNavigation('/search')}
           >
             <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl group-hover:scale-110 transition-transform duration-300">
               <span className="text-white font-bold text-xl">🏡</span>
@@ -43,16 +43,6 @@ const Navbar = () => {
           <div className="hidden md:flex items-center space-x-8">
             {isAuthenticated() && (
               <>
-                <button
-                  onClick={() => handleNavigation('/')}
-                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                    location.pathname === '/' 
-                      ? 'text-white bg-white/20 shadow-lg' 
-                      : 'text-white/90 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  🏠 Home
-                </button>
                 <button
                   onClick={() => handleNavigation('/search')}
                   className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
@@ -161,12 +151,6 @@ const Navbar = () => {
             <div className="px-2 py-3 space-y-1">
               {isAuthenticated() && (
                 <>
-                  <button
-                    onClick={() => handleNavigation('/')}
-                    className="block w-full text-left px-3 py-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
-                  >
-                    🏠 Home
-                  </button>
                   <button
                     onClick={() => handleNavigation('/search')}
                     className="block w-full text-left px-3 py-2 text-white/90 hover:text-white hover:bg-white/10 rounded-lg transition-colors"

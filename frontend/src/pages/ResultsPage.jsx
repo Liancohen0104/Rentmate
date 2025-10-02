@@ -110,7 +110,7 @@ const ResultsPage = () => {
             <span className="text-white font-bold text-4xl">🏠</span>
           </div>
           <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-white mx-auto mb-4"></div>
-          <p className="text-white text-xl font-semibold">מחפש את הדירות המושלמות עבורך...</p>
+          <p className="text-white text-xl font-semibold">...מחפש את הדירות המושלמות עבורך</p>
           <p className="text-white/80 mt-2">AI מדרג את הדירות לפי העדפותיך</p>
         </div>
       </div>
