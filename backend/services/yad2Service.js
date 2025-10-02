@@ -74,20 +74,4 @@ export async function scrapeApartments(limit = 50) {
   return results.slice(0, limit);
 }
 
-// מחזיר מודעות גולמיות (כפי שמגיעות מיד2) עם הגבלה על מספר המודעות
-export async function scrapeRawApartments(limit = 50) {
-  let results = [];
-  let page = 1;
-
-  while (results.length < limit) {
-    const { apartments } = await scrapePage(page);
-    if (!apartments.length) break;
-
-    results.push(...apartments); 
-    page++;
-  }
-
-  return results.slice(0, limit);
-}
-
 

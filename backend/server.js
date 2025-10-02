@@ -33,7 +33,6 @@ const PORT = process.env.PORT;
 app.use("/apartment-match", apartmentMatchRoutes);
 app.use("/apartments", apartmentRoutes);
 app.use("/users", userRoutes);
-app.use("/scrape", scrapeRoutes);
 
 // ברירת מחדל – דף בית קטן
 app.get("/", (req, res) => {

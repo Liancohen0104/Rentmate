@@ -205,10 +205,10 @@ const ResultsPage = () => {
                   </div>
 
                   {/* AI Score Badge */}
-                  {apartment.aiScore && (
+                  {apartment._ai?.score && (
                     <div className="absolute top-4 left-4 z-10">
                       <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white font-bold px-3 py-1 rounded-full shadow-lg">
-                        <span className="text-sm">⭐ {Math.round(apartment.aiScore)}</span>
+                        <span className="text-sm">⭐ {Math.round(apartment._ai.score * 100)}</span>
                       </div>
                     </div>
                   )}
@@ -227,6 +227,18 @@ const ResultsPage = () => {
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    
+                    {/* AI Reason Badge */}
+                    {apartment._ai?.reason && (
+                      <div className="absolute bottom-0 left-0 right-0 p-3">
+                        <div className="bg-black/80 backdrop-blur-md rounded-xl p-3 border border-white/20" dir="rtl">
+                          <div className="flex items-start gap-2">
+                            <span className="text-lg flex-shrink-0">🤖</span>
+                            <p className="text-white text-sm leading-relaxed">{apartment._ai.reason}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Content */}
@@ -366,9 +378,9 @@ const ResultsPage = () => {
                     </div>
                   )}
                 </div>
-                {selectedApartment.aiScore && (
+                {selectedApartment._ai?.score && (
                   <div className="bg-gradient-to-r from-green-400 to-emerald-500 text-white font-bold px-6 py-3 rounded-2xl">
-                    <div className="text-3xl">⭐ {Math.round(selectedApartment.aiScore)}</div>
+                    <div className="text-3xl">⭐ {Math.round(selectedApartment._ai.score * 100)}</div>
                     <div className="text-xs">ציון AI</div>
                   </div>
                 )}
