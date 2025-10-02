@@ -33,9 +33,13 @@ const Navbar = () => {
             className="flex items-center space-x-3 cursor-pointer group"
             onClick={() => handleNavigation('/search')}
           >
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-xl group-hover:scale-110 transition-transform duration-300">
-              <span className="text-white font-bold text-xl">🏡</span>
-            </div>
+          <div className="group-hover:scale-110 transition-transform duration-300">
+            <img 
+              src="/icon.png" 
+              alt="RentMate Logo" 
+              className="w-14 h-14 object-contain"
+            />
+          </div>
             <span className="text-2xl font-bold text-white">Rentmate</span>
           </div>
 
