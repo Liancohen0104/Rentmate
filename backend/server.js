@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import apartmentMatchRoutes from "./routes/apartmentMatchRoutes.js";
+import apartmentRoutes from "./routes/apartmentRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import sequelize from "./db/db.js";
 import "./services/apartmentUpdater.js";
@@ -29,6 +30,7 @@ const PORT = process.env.PORT;
 
 // ראוטים
 app.use("/apartment-match", apartmentMatchRoutes);
+app.use("/apartments", apartmentRoutes);
 app.use("/users", userRoutes);
 
 // ברירת מחדל – דף בית קטן

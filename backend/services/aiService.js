@@ -177,7 +177,7 @@ export async function pickBestApartments(userRequirements, apartments, options =
       (typeof result?.response?.text === "function" ? result.response.text() : undefined) ||
       result?.response?.candidates?.[0]?.content?.parts?.[0]?.text ||
       "";
-
+    
     const parsed = tryParseJSON(text);
 
     // אם אין פלט תקין 
