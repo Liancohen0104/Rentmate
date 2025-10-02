@@ -11,7 +11,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login', { replace: true });
+    navigate('/', { replace: true });
   };
 
   const handleNavigation = (path) => {
@@ -31,7 +31,7 @@ const Navbar = () => {
           {/* Logo */}
           <div 
             className="flex items-center space-x-3 cursor-pointer group"
-            onClick={() => handleNavigation('/search')}
+            onClick={() => handleNavigation('/')}
           >
           <div className="group-hover:scale-110 transition-transform duration-300">
             <img 
@@ -123,7 +123,7 @@ const Navbar = () => {
             ) : (
               <div className="space-x-3">
                 <button
-                  onClick={() => handleNavigation('/login')}
+                  onClick={() => handleNavigation('/')}
                   className="px-4 py-2 text-white/90 hover:text-white transition-colors"
                 >
                   Login

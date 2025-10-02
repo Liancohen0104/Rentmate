@@ -50,7 +50,7 @@ const LoginPage = () => {
       
       if (result.success) {
         // 🔥 NEW - Navigate to home page using React Router
-        navigate('/results', { replace: true });
+        navigate('/', { replace: true });
       } else {
         setError(result.error);
       }
