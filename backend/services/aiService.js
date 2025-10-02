@@ -139,6 +139,7 @@ ${JSON.stringify(listings, null, 2)}
 `;
 }
 
+
 // AI בחירת הדירות הטובות ביותר לפי דרישות משתמש בעזרת
 export async function pickBestApartments(userRequirements, apartments, options = {}) {
   const maxResults = Number(options.maxResults ?? 10);
@@ -169,9 +170,10 @@ export async function pickBestApartments(userRequirements, apartments, options =
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: {
         temperature: 0.3,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 12000,
       },
     });
+
 
     const text =
       (typeof result?.response?.text === "function" ? result.response.text() : undefined) ||

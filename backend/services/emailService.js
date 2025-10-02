@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendPasswordResetEmail(to, token) {
-  const port = process.env.PORT || 4000;
+  const port = 3000;
   const appUrl = `http://localhost:${port}`;
   const resetUrl = `${appUrl}/reset-password?token=${encodeURIComponent(token)}`;
 
