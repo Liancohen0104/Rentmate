@@ -162,13 +162,11 @@ const ResultsPage = () => {
               הדירות המושלמות עבורך
             </h1>
             <p className="text-xl text-white/90 mb-2">
-              מדורג על ידי AI לפי העדפותיך האישיות
+              לפי העדפותיך האישיות AI מדורג על ידי
             </p>
             {meta && (
               <div className="inline-flex items-center space-x-2 space-x-reverse bg-white/10 backdrop-blur-sm px-6 py-3 rounded-full border border-white/20">
-                <span className="text-white/90">נמצאו</span>
-                <span className="text-2xl font-bold text-white">{results.length}</span>
-                <span className="text-white/90">דירות מתאימות</span>
+                <span className="text-white/90"> {results.length} :דירות מתאימות </span>
               </div>
             )}
           </div>

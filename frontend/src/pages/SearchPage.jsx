@@ -251,8 +251,11 @@ const SearchPage = () => {
               חפש את הדירה המושלמת
             </h1>
             <p className="text-xl text-white/90 mb-4">
-              {filteredApartments.length} דירות זמינות
+            
+            {filteredApartments.length}     :דירות זמינות 
+            
             </p>
+            
             
             {/* Filter Toggle Button */}
             <button
