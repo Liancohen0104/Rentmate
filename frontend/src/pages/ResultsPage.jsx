@@ -3,6 +3,59 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
+// Image Gallery Component
+const ImageGallery = ({ images, coverImage }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  
+  // Combine cover image with other images
+  const allImages = [coverImage, ...(images || [])].filter(Boolean);
+  
+  if (allImages.length === 0) {
+    return (
+      <div className="relative h-96 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+        <span className="text-9xl">🏠</span>
+      </div>
+    );
+  }
+
+  const nextImage = () => {
+    setCurrentIndex((prev) => (prev + 1) % allImages.length);
+  };
+
+  const prevImage = () => {
+    setCurrentIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+  };
+
+  return (
+    <div className="relative h-96 bg-black">
+      {/* Main Image */}
+      <img
+        src={allImages[currentIndex]}
+        alt={`תמונה ${currentIndex + 1}`}
+        className="w-full h-full object-cover"
+      />
+      
+      {/* Navigation Arrows - ONLY ARROWS */}
+      {allImages.length > 1 && (
+        <>
+          <button
+            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center text-white text-3xl transition-all duration-300 z-10 backdrop-blur-sm shadow-lg"
+          >
+            ←
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-14 h-14 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center text-white text-3xl transition-all duration-300 z-10 backdrop-blur-sm shadow-lg"
+          >
+            →
+          </button>
+        </>
+      )}
+    </div>
+  );
+};
+
 const ResultsPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -298,19 +351,7 @@ const ResultsPage = () => {
             </button>
 
             {/* Image Gallery */}
-            <div className="relative h-96 bg-gradient-to-br from-blue-400 to-purple-500">
-              {selectedApartment.coverImage ? (
-                <img
-                  src={selectedApartment.coverImage}
-                  alt="דירה"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-9xl">🏠</span>
-                </div>
-              )}
-            </div>
+            <ImageGallery images={selectedApartment.images} coverImage={selectedApartment.coverImage} />
 
             {/* Content */}
             <div className="p-8 text-right">
