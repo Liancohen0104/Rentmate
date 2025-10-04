@@ -1,4 +1,4 @@
-## **🏡** Rentmate - AI-Powered Real Estate Matching Platform
+## **🏡** Rentmate: AI-Powered Real Estate Matching Platform
 
 ## 📖 Overview
 
