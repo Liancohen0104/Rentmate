@@ -11,7 +11,7 @@ Powered by Gemini (Google Generative AI), Rentmate ranks apartments by relevance
 
 ## 🎥 Demo Video
 
-<a href="https://youtu.be/hd9tCDCIjXE" target="_blank">
+<a href="https://youtu.be/ZWYFLzcL4kY" target="_blank">
   <img 
     src="frontend/public/Demo.png" 
     alt="Rentmate App Demo" 
