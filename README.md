@@ -1,4 +1,4 @@
-# **🏡** Rentmate - AI-Powered Real Estate Matching Platform
+## **🏡** Rentmate - AI-Powered Real Estate Matching Platform
 
 ## 📖 Overview
 
@@ -9,7 +9,7 @@ Powered by Gemini (Google Generative AI), Rentmate ranks apartments by relevance
 
 ---
 
-### 🎥 Demo Video
+## 🎥 Demo Video
 
 <a href="https://youtu.be/hd9tCDCIjXE" target="_blank">
   <img 
@@ -72,12 +72,6 @@ rentmate-app/
 ├── .gitignore                      # Git ignore file
 └── README.md                       # Project documentation
 ```
-
----
-
-## 🧠 AI Integration
-
-(We’ll describe how Rentmate uses Gemini AI for ranking and explanation generation.)
 
 ---
 
